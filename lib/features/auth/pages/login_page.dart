@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import '../controllers/login_controller.dart';
-import '../widgets/cpf_input.dart';
-import '../widgets/password_input.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,74 +8,187 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _cpfController = TextEditingController();
-  final _senhaController = TextEditingController();
-  final _loginController = LoginController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
-  bool _loading = false;
-
-  void _realizarLogin() async {
-    final cpf = _cpfController.text;
-    final senha = _senhaController.text;
-
-    final camposValidos = _loginController.validarCampos(cpf, senha);
-
-    if (!camposValidos) {
-      _mostrarErro('Preencha CPF e senha corretamente');
-      return;
-    }
-
-    setState(() => _loading = true);
-
-    final sucesso = await _loginController.login(cpf, senha);
-
-    setState(() => _loading = false);
-
-    if (sucesso) {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      _mostrarErro('CPF ou senha inválidos');
-    }
-  }
-
-  void _mostrarErro(String mensagem) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(mensagem)));
-  }
-
-  @override
-  void dispose() {
-    _cpfController.dispose();
-    _senhaController.dispose();
-    super.dispose();
-  }
+  bool _showPassword = false;
+  bool _rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CpfInput(controller: _cpfController),
-            const SizedBox(height: 12),
-            PasswordInput(controller: _senhaController),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: _loading ? null : _realizarLogin,
-                child: _loading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text('Entrar'),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFEFF6FF), Color(0xFFDBEAFE)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              padding: const EdgeInsets.all(28),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 120,
+                    child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+                  ),
+                  const SizedBox(height: 16),
+
+                  const Text(
+                    "CobAle",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Acesse sua conta",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("E-mail"),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          hintText: "seu@email.com",
+                          prefixIcon: const Icon(Icons.mail_outline),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("Senha"),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: !_showPassword,
+                        decoration: InputDecoration(
+                          hintText: "••••••••",
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _showPassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _showPassword = !_showPassword;
+                              });
+                            },
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _rememberMe,
+                            onChanged: (value) {
+                              setState(() {
+                                _rememberMe = value!;
+                              });
+                            },
+                          ),
+                          const Text(
+                            "Lembrar-me",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Esqueceu a senha?",
+                          style: TextStyle(color: Color(0xFF2563EB)),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF2563EB),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      child: const Text(
+                        "Entrar",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Não tem uma conta? ",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Criar conta",
+                          style: TextStyle(color: Color(0xFF2563EB)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

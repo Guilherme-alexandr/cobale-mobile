@@ -1,159 +1,196 @@
 import 'package:flutter/material.dart';
-import '../../debitos/models/debito_model.dart';
 import '../controllers/negociacao_controller.dart';
-import '../models/simulacao_model.dart';
+import '../widgets/card_sucesso.dart';
+import '../widgets/card_valor.dart';
+import '../widgets/card_tipo_pagamento.dart';
+import '../widgets/card_simulacao_parcelas.dart';
+import '../widgets/card_data_vencimento.dart';
+import '../widgets/botao_confirmar.dart';
 
 class NegociacaoPage extends StatefulWidget {
-  final Debito debito;
+  final int idCobranca;
+  final double valorDebito;
+  final String nomeCliente;
+  final VoidCallback aoVoltar;
+  final VoidCallback aoConfirmar;
 
-  const NegociacaoPage({super.key, required this.debito});
+  const NegociacaoPage({
+    Key? key,
+    required this.idCobranca,
+    required this.valorDebito,
+    required this.nomeCliente,
+    required this.aoVoltar,
+    required this.aoConfirmar,
+  }) : super(key: key);
 
   @override
   State<NegociacaoPage> createState() => _NegociacaoPageState();
 }
 
 class _NegociacaoPageState extends State<NegociacaoPage> {
-  final controller = NegociacaoController();
+  late final NegociacaoController _controller;
 
-  bool aVista = true;
-  int parcelas = 1;
-  Simulacao? simulacao;
+  String tipoPagamento = 'dinheiro';
+  int parcelas = 2;
+  String dataVencimento = '';
+  bool processando = false;
+  bool sucesso = false;
 
-  void _simular() {
+  @override
+  void initState() {
+    super.initState();
+    _controller = NegociacaoController();
+  }
+
+  double get totalComJuros {
+    return _controller.calcularTotalComJuros(
+      widget.valorDebito,
+      parcelas,
+      tipoPagamento == 'dinheiro',
+    );
+  }
+
+  double get valorParcela {
+    return _controller.calcularValorParcela(totalComJuros, parcelas);
+  }
+
+  double get valorJuros {
+    return _controller.calcularValorJuros(widget.valorDebito, totalComJuros);
+  }
+
+  void _aoConfirmar() {
+    if (!_controller.isDataValida(dataVencimento)) {
+      _mostrarErro('Por favor, selecione uma data de vencimento válida');
+      return;
+    }
+
     setState(() {
-      simulacao = controller.simular(
-        valorOriginal: widget.debito.valor,
-        aVista: aVista,
-        parcelas: parcelas,
-      );
+      processando = true;
     });
+
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          processando = false;
+          sucesso = true;
+        });
+      }
+    });
+  }
+
+  void _mostrarErro(String mensagem) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Atenção'),
+        content: Text(mensagem),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Negociação')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Valor original: R\$ ${widget.debito.valor.toStringAsFixed(2)}',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
+    if (sucesso) {
+      return CardSucesso(
+        pagamentoAVista: tipoPagamento == 'dinheiro',
+        valorDebito: widget.valorDebito,
+        parcelas: parcelas,
+        valorParcela: valorParcela,
+        aoConfirmar: widget.aoConfirmar,
+      );
+    }
 
-            const Text('Tipo de negociação'),
-            Row(
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB),
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: widget.aoVoltar,
+              color: Colors.black,
+            ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text('À vista'),
-                    value: true,
-                    groupValue: aVista,
-                    onChanged: (value) {
-                      setState(() {
-                        aVista = value!;
-                        parcelas = 1;
-                        simulacao = null; // limpa simulação anterior
-                      });
-                    },
-                  ),
+                const Text(
+                  'Negociação de Débito',
+                  style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
-                Expanded(
-                  child: RadioListTile<bool>(
-                    title: const Text('Parcelado'),
-                    value: false,
-                    groupValue: aVista,
-                    onChanged: (value) {
-                      setState(() {
-                        aVista = value!;
-                        parcelas = 2;
-                        simulacao = null;
-                      });
-                    },
-                  ),
+                Text(
+                  widget.nomeCliente,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
                 ),
               ],
             ),
-            if (!aVista)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 10),
-                  const Text('Quantidade de parcelas'),
-                  const SizedBox(height: 8),
+            pinned: true,
+          ),
 
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: parcelas > 2
-                            ? () {
-                                setState(() {
-                                  parcelas--;
-                                  simulacao = null;
-                                });
-                              }
-                            : null,
-                        icon: const Icon(Icons.remove),
-                      ),
-
-                      Text(
-                        parcelas.toString(),
-                        style: const TextStyle(fontSize: 18),
-                      ),
-
-                      IconButton(
-                        onPressed: parcelas < 12
-                            ? () {
-                                setState(() {
-                                  parcelas++;
-                                  simulacao = null;
-                                });
-                              }
-                            : null,
-                        icon: const Icon(Icons.add),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-            const SizedBox(height: 20),
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _simular,
-                child: const Text('Simular'),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            if (simulacao != null) ...[
-              Text(
-                'Valor com desconto: R\$ ${simulacao!.valorComDesconto.toStringAsFixed(2)}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Parcelas: ${simulacao!.parcelas}x de R\$ ${simulacao!.valorParcela.toStringAsFixed(2)}',
-              ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // FUTURO: confirmar acordo (API)
-                  },
-                  child: const Text('Confirmar Acordo'),
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                CardValor(
+                  valorDebito: widget.valorDebito,
+                  nomeCliente: widget.nomeCliente,
                 ),
-              ),
-            ],
-          ],
-        ),
+                const SizedBox(height: 16),
+
+                CardTipoPagamento(
+                  tipoPagamento: tipoPagamento,
+                  valorDebito: widget.valorDebito,
+                  aoAlterar: (valor) {
+                    setState(() {
+                      tipoPagamento = valor;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                if (tipoPagamento == 'parcelamento')
+                  CardSimulacaoParcelas(
+                    parcelas: parcelas,
+                    valorDebito: widget.valorDebito,
+                    totalComJuros: totalComJuros,
+                    valorParcela: valorParcela,
+                    aoAlterarParcelas: (valor) {
+                      setState(() {
+                        parcelas = valor;
+                      });
+                    },
+                  ),
+
+                if (tipoPagamento == 'parcelamento') const SizedBox(height: 16),
+
+                CardDataVencimento(
+                  tipoPagamento: tipoPagamento,
+                  dataVencimento: dataVencimento,
+                  aoAlterarData: (valor) {
+                    setState(() {
+                      dataVencimento = valor;
+                    });
+                  },
+                ),
+
+                const SizedBox(height: 24),
+
+                BotaoConfirmar(
+                  processando: processando,
+                  aoPressionar: _aoConfirmar,
+                ),
+              ]),
+            ),
+          ),
+        ],
       ),
     );
   }
