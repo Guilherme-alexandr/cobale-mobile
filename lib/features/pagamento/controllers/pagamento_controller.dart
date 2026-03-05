@@ -16,19 +16,48 @@ class PagamentoController {
     return true;
   }
 
+  // PIX é instantâneo
   Future<bool> processarPagamentoPix() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1)); // Simula processamento
     return true;
   }
 
+  // Boleto leva até 3 dias
   Future<bool> processarPagamentoBoleto() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1)); // Simula geração
     return true;
   }
 
+  String getMensagemSucesso({
+    required String metodo,
+    required double valor,
+    int? parcelaAtual,
+    int? totalParcelas,
+  }) {
+    String baseMessage;
+
+    if (parcelaAtual != null && totalParcelas != null) {
+      baseMessage =
+          'Pagamento da parcela $parcelaAtual/$totalParcelas de R\$ ${valor.toStringAsFixed(2)}';
+    } else {
+      baseMessage = 'Seu pagamento de R\$ ${valor.toStringAsFixed(2)}';
+    }
+
+    switch (metodo) {
+      case 'cartao':
+        return '$baseMessage foi processado com sucesso.';
+      case 'pix':
+        return '$baseMessage foi processado com sucesso via PIX. O pagamento é instantâneo e já pode ser confirmado.';
+      case 'boleto':
+        return '$baseMessage foi gerado com sucesso. O pagamento será confirmado em até 3 dias úteis após o processamento do boleto.';
+      default:
+        return '$baseMessage foi processado com sucesso.';
+    }
+  }
+
+  // Formatadores e validadores (mantidos iguais)
   String formatarNumeroCartao(String valor) {
     String numeros = valor.replaceAll(RegExp(r'[^0-9]'), '');
-
     if (numeros.length > 16) numeros = numeros.substring(0, 16);
 
     StringBuffer buffer = StringBuffer();
@@ -43,7 +72,6 @@ class PagamentoController {
 
   String formatarValidade(String valor) {
     String numeros = valor.replaceAll(RegExp(r'[^0-9]'), '');
-
     if (numeros.length > 4) numeros = numeros.substring(0, 4);
 
     if (numeros.length >= 3) {
@@ -59,17 +87,13 @@ class PagamentoController {
 
   bool validarValidade(String validade) {
     if (validade.length != 5) return false;
-
     try {
       String mes = validade.substring(0, 2);
       String ano = validade.substring(3, 5);
-
       int mesInt = int.parse(mes);
       int anoInt = int.parse(ano) + 2000;
-
       DateTime dataValidade = DateTime(anoInt, mesInt + 1, 0);
       DateTime hoje = DateTime.now();
-
       return dataValidade.isAfter(hoje);
     } catch (e) {
       return false;
@@ -78,16 +102,5 @@ class PagamentoController {
 
   bool validarCVV(String cvv) {
     return cvv.length >= 3 && cvv.length <= 4;
-  }
-
-  String getMensagemSucesso({
-    required double valor,
-    int? parcelaAtual,
-    int? totalParcelas,
-  }) {
-    if (parcelaAtual != null && totalParcelas != null) {
-      return 'Pagamento da parcela $parcelaAtual/$totalParcelas de R\$ ${valor.toStringAsFixed(2)} foi processado com sucesso.';
-    }
-    return 'Seu pagamento de R\$ ${valor.toStringAsFixed(2)} foi processado com sucesso.';
   }
 }

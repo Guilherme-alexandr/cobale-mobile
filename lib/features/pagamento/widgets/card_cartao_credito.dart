@@ -37,11 +37,10 @@ class _CardCartaoCreditoState extends State<CardCartaoCredito> {
           key: _formKey,
           child: Column(
             children: [
-              // Número do Cartão
               TextFormField(
                 initialValue: numeroCartao,
                 keyboardType: TextInputType.number,
-                maxLength: 19,
+                maxLength: 16,
                 decoration: InputDecoration(
                   labelText: 'Número do Cartão',
                   hintText: '0000 0000 0000 0000',
@@ -68,7 +67,6 @@ class _CardCartaoCreditoState extends State<CardCartaoCredito> {
 
               const SizedBox(height: 16),
 
-              // Nome no Cartão
               TextFormField(
                 initialValue: nomeCartao,
                 textCapitalization: TextCapitalization.characters,
@@ -94,14 +92,13 @@ class _CardCartaoCreditoState extends State<CardCartaoCredito> {
 
               const SizedBox(height: 16),
 
-              // Validade e CVV
               Row(
                 children: [
                   Expanded(
                     child: TextFormField(
                       initialValue: validade,
                       keyboardType: TextInputType.number,
-                      maxLength: 5,
+                      maxLength: 4,
                       decoration: InputDecoration(
                         labelText: 'Validade',
                         hintText: 'MM/AA',
@@ -158,8 +155,6 @@ class _CardCartaoCreditoState extends State<CardCartaoCredito> {
               ),
 
               const SizedBox(height: 24),
-
-              // Botão de pagamento
               SizedBox(
                 width: double.infinity,
                 height: 50,

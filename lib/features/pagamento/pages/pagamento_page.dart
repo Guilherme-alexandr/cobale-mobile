@@ -67,7 +67,6 @@ class _PagamentoPageState extends State<PagamentoPage>
     if (widget.valorPersonalizado != null) {
       return widget.valorPersonalizado!;
     }
-    // Valor padrão se não vier personalizado
     return 1250.00;
   }
 
@@ -100,6 +99,39 @@ class _PagamentoPageState extends State<PagamentoPage>
     }
   }
 
+  void _confirmarPagamentoPix() {
+    // Para PIX, o pagamento é confirmado imediatamente após copiar o código
+    _processarPagamento();
+  }
+
+  void _confirmarPagamentoBoleto() {
+    // Para boleto, mostra um diálogo explicativo antes de confirmar
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar pagamento?'),
+        content: const Text(
+          'O pagamento via boleto pode levar até 3 dias úteis para ser compensado. '
+          'Deseja confirmar que já realizou o pagamento?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _processarPagamento();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+            child: const Text('Sim, já paguei'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -112,6 +144,7 @@ class _PagamentoPageState extends State<PagamentoPage>
     if (sucesso) {
       return CardSucessoPagamento(
         valor: valorPagamento,
+        metodoPagamento: metodoPagamento, // ✅ Passando o método de pagamento
         parcelaAtual: widget.parcelaAtual,
         totalParcelas: widget.totalParcelas,
         aoConfirmar: widget.aoConfirmar,
@@ -195,26 +228,8 @@ class _PagamentoPageState extends State<PagamentoPage>
 
                 const SizedBox(height: 16),
 
-                // Conteúdo das abas
-                Container(
-                  child: [
-                    // Cartão
-                    CardCartaoCredito(
-                      valor: valorPagamento,
-                      processando: processando,
-                      aoProcessar: _processarPagamento,
-                    ),
-
-                    // PIX
-                    CardPix(aoProcessar: () => _processarPagamento()),
-
-                    // Boleto
-                    CardBoleto(
-                      vencimento: DateTime.now().add(const Duration(days: 3)),
-                      aoProcessar: () => _processarPagamento(),
-                    ),
-                  ][_tabController.index],
-                ),
+                // Conteúdo das abas - AGORA COM CONFIRMAÇÃO CORRETA
+                _buildConteudoAba(),
 
                 const SizedBox(height: 16),
 
@@ -239,5 +254,58 @@ class _PagamentoPageState extends State<PagamentoPage>
         ],
       ),
     );
+  }
+
+  // ✅ Método separado para construir o conteúdo da aba atual
+  Widget _buildConteudoAba() {
+    switch (_tabController.index) {
+      case 0: // Cartão
+        return CardCartaoCredito(
+          valor: valorPagamento,
+          processando: processando,
+          aoProcessar: _processarPagamento,
+        );
+
+      case 1: // PIX
+        return CardPix(
+          aoCopiarCodigo: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Código PIX copiado!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          aoConfirmarPagamento: _confirmarPagamentoPix, // ✅ Novo callback
+        );
+
+      case 2: // Boleto
+        return CardBoleto(
+          vencimento: DateTime.now().add(const Duration(days: 3)),
+          aoCopiarCodigo: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Código do boleto copiado!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          aoImprimir: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Boleto gerado para impressão!'),
+                backgroundColor: Colors.blue,
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          aoConfirmarPagamento: _confirmarPagamentoBoleto, // ✅ Novo callback
+        );
+
+      default:
+        return const SizedBox();
+    }
   }
 }

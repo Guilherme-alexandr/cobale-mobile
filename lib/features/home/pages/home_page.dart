@@ -48,17 +48,51 @@ class _HomePageState extends State<HomePage> {
     ),
     Bill(
       id: 3,
+      client: "Pedro Oliveira",
+      email: "pedro.oliveira@email.com",
+      phone: "(11) 99876-5432",
+      value: 2100.00,
+      dueDate: DateTime(2026, 2, 20),
+      issueDate: DateTime(2026, 2, 10),
+      status: "pending",
+      description: "Desenvolvimento de sistema customizado",
+      items: [
+        BillItem(description: "Análise", quantity: 1, unitValue: 500.00),
+        BillItem(
+          description: "Desenvolvimento",
+          quantity: 1,
+          unitValue: 1600.00,
+        ),
+      ],
+    ),
+    Bill(
+      id: 4,
       client: "Ana Costa",
       email: "ana.costa@email.com",
       phone: "(11) 98888-9999",
       value: 500.00,
       dueDate: DateTime(2026, 2, 10),
       issueDate: DateTime(2026, 1, 10),
-      status: "completed",
+      status: "completed", // ← STATUS CORRETO
       description: "Consultoria pontual",
       items: [
         BillItem(description: "Consultoria", quantity: 5, unitValue: 100.00),
       ],
+    ),
+    Bill(
+      id: 5,
+      client: "Carlos Souza",
+      email: "carlos.souza@email.com",
+      phone: "(11) 97777-8888",
+      value: 1800.00,
+      dueDate: DateTime(2026, 2, 13),
+      issueDate: DateTime(2026, 1, 13),
+      status: "in_progress",
+      description: "Contrato mensal - Janeiro 2026",
+      items: [
+        BillItem(description: "Mensalidade", quantity: 1, unitValue: 1800.00),
+      ],
+      installment: Installment(current: 1, total: 12, value: 153.00),
     ),
   ];
 

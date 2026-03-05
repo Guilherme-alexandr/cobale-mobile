@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import '../controllers/pagamento_controller.dart';
 
 class CardPix extends StatelessWidget {
-  final VoidCallback aoProcessar;
+  final VoidCallback aoCopiarCodigo;
+  final VoidCallback aoConfirmarPagamento; // ✅ ADICIONADO
 
-  const CardPix({Key? key, required this.aoProcessar}) : super(key: key);
+  const CardPix({
+    Key? key,
+    required this.aoCopiarCodigo,
+    required this.aoConfirmarPagamento, // ✅ ADICIONADO
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +20,6 @@ class CardPix extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // QR Code (simulado)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -51,7 +55,6 @@ class CardPix extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            // Código PIX
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -70,14 +73,14 @@ class CardPix extends StatelessWidget {
                     width: double.infinity,
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        // Copiar código
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Código PIX copiado!'),
                             backgroundColor: Colors.green,
+                            duration: Duration(seconds: 1),
                           ),
                         );
-                        aoProcessar();
+                        aoCopiarCodigo();
                       },
                       icon: const Icon(Icons.copy, size: 16),
                       label: const Text('Copiar Código PIX'),
@@ -100,6 +103,52 @@ class CardPix extends StatelessWidget {
               'Pagamento instantâneo • Disponível 24h',
               style: TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Confirmar pagamento?'),
+                      content: const Text(
+                        'Você já realizou o pagamento via PIX?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Não'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            aoConfirmarPagamento(); // ✅ AGORA USA O CALLBACK
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: const Text('Sim, já paguei'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Já realizei o pagamento',
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
             ),
           ],
         ),

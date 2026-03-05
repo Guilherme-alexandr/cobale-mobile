@@ -68,7 +68,6 @@ class _DetailsPageState extends State<DetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Mostrar erro
     if (_errorMessage != null) {
       return Scaffold(
         appBar: AppBar(

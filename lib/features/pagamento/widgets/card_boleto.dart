@@ -3,12 +3,16 @@ import '../controllers/pagamento_controller.dart';
 
 class CardBoleto extends StatelessWidget {
   final DateTime vencimento;
-  final VoidCallback aoProcessar;
+  final VoidCallback aoCopiarCodigo;
+  final VoidCallback aoImprimir;
+  final VoidCallback aoConfirmarPagamento;
 
   const CardBoleto({
     Key? key,
     required this.vencimento,
-    required this.aoProcessar,
+    required this.aoCopiarCodigo,
+    required this.aoImprimir,
+    required this.aoConfirmarPagamento,
   }) : super(key: key);
 
   @override
@@ -58,9 +62,10 @@ class CardBoleto extends StatelessWidget {
                         const SnackBar(
                           content: Text('Código copiado!'),
                           backgroundColor: Colors.green,
+                          duration: Duration(seconds: 1),
                         ),
                       );
-                      aoProcessar();
+                      aoCopiarCodigo();
                     },
                     icon: const Icon(Icons.copy, size: 16),
                     label: const Text('Copiar Código'),
@@ -79,11 +84,12 @@ class CardBoleto extends StatelessWidget {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Boleto gerado!'),
-                          backgroundColor: Colors.green,
+                          content: Text('Boleto gerado para impressão!'),
+                          backgroundColor: Colors.blue,
+                          duration: Duration(seconds: 1),
                         ),
                       );
-                      aoProcessar();
+                      aoImprimir();
                     },
                     icon: const Icon(Icons.print, size: 16),
                     label: const Text('Imprimir'),
@@ -136,6 +142,53 @@ class CardBoleto extends StatelessWidget {
                     textAlign: TextAlign.center,
                   ),
                 ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Confirmar pagamento?'),
+                      content: const Text(
+                        'O pagamento via boleto pode levar até 3 dias úteis para ser compensado. '
+                        'Deseja confirmar que já realizou o pagamento?',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancelar'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            aoConfirmarPagamento(); // ✅ AGORA USA O CALLBACK
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                          ),
+                          child: const Text('Sim, já paguei'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                child: const Text(
+                  'Já realizei o pagamento',
+                  style: TextStyle(fontSize: 16),
+                ),
               ),
             ),
           ],
