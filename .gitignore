@@ -11,37 +11,56 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-.tmp.driveupload/
-.tmp.drivedowload/
 
-# IntelliJ related
+# Pastas temporárias de upload / sync
+.tmp.driveupload/
+.tmp.drivedownload/
+
+# IntelliJ / Android Studio related
 *.iml
 *.ipr
 *.iws
 .idea/
+.gradle/
+local.properties
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code settings
+.vscode/
 
-# Flutter/Dart/Pub related
+# Flutter / Dart / Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
-/coverage/
+build/
+coverage/
+pubspec.lock
 
-# Symbolication related
+# Symbolication / obfuscation related
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Android Studio build artifacts
+/android/app/build/
+/android/app/debug/
+/android/app/profile/
+/android/app/release/
+
+/ios/Flutter/Flutter.framework/
+/ios/Flutter/Flutter.podspec
+Pods/
+Runner.xcworkspace/
+DerivedData/
+*.xcuserstate
+
+# Generated files
+generated_plugin_registrant.dart
+
+# Other
+*.lock
+*.log
+*.tmp
