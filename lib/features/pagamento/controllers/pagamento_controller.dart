@@ -16,15 +16,13 @@ class PagamentoController {
     return true;
   }
 
-  // PIX é instantâneo
   Future<bool> processarPagamentoPix() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simula processamento
+    await Future.delayed(const Duration(seconds: 1));
     return true;
   }
 
-  // Boleto leva até 3 dias
   Future<bool> processarPagamentoBoleto() async {
-    await Future.delayed(const Duration(seconds: 1)); // Simula geração
+    await Future.delayed(const Duration(seconds: 1));
     return true;
   }
 
@@ -55,7 +53,6 @@ class PagamentoController {
     }
   }
 
-  // Formatadores e validadores (mantidos iguais)
   String formatarNumeroCartao(String valor) {
     String numeros = valor.replaceAll(RegExp(r'[^0-9]'), '');
     if (numeros.length > 16) numeros = numeros.substring(0, 16);

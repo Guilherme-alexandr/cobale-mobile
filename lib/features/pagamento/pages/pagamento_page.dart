@@ -15,14 +15,14 @@ class PagamentoPage extends StatefulWidget {
   final double? valorPersonalizado;
 
   const PagamentoPage({
-    Key? key,
+    super.key,
     required this.aoVoltar,
     required this.aoConfirmar,
     this.idCobranca,
     this.parcelaAtual,
     this.totalParcelas,
     this.valorPersonalizado,
-  }) : super(key: key);
+  });
 
   @override
   State<PagamentoPage> createState() => _PagamentoPageState();
@@ -212,7 +212,7 @@ class _PagamentoPageState extends State<PagamentoPage>
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
+                          color: Colors.grey.withValues(alpha: 0.1),
                           spreadRadius: 1,
                           blurRadius: 2,
                         ),
@@ -228,7 +228,6 @@ class _PagamentoPageState extends State<PagamentoPage>
 
                 const SizedBox(height: 16),
 
-                // Conteúdo das abas - AGORA COM CONFIRMAÇÃO CORRETA
                 _buildConteudoAba(),
 
                 const SizedBox(height: 16),

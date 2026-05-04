@@ -7,11 +7,11 @@ class CardDataVencimento extends StatelessWidget {
   final Function(String) aoAlterarData;
 
   const CardDataVencimento({
-    Key? key,
+    super.key,
     required this.tipoPagamento,
     required this.dataVencimento,
     required this.aoAlterarData,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

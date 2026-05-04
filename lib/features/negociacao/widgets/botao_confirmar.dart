@@ -5,10 +5,10 @@ class BotaoConfirmar extends StatelessWidget {
   final VoidCallback aoPressionar;
 
   const BotaoConfirmar({
-    Key? key,
+    super.key,
     required this.processando,
     required this.aoPressionar,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +20,11 @@ class BotaoConfirmar extends StatelessWidget {
         child: ElevatedButton.icon(
           onPressed: processando ? null : aoPressionar,
           icon: processando
-              ? Container(
+              // ✅ CORRIGIDO AQUI: Container substituído por SizedBox com 'const'
+              ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: const CircularProgressIndicator(
+                  child: CircularProgressIndicator(
                     color: Colors.white,
                     strokeWidth: 2,
                   ),

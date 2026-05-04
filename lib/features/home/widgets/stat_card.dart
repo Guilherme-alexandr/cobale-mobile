@@ -20,7 +20,7 @@ class StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.1), color.withOpacity(0.2)],
+          colors: [color.withValues(alpha: 0.1), color.withValues(alpha: 0.2)],
         ),
         borderRadius: BorderRadius.circular(16),
       ),

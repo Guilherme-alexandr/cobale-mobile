@@ -7,11 +7,11 @@ class CardCartaoCredito extends StatefulWidget {
   final Function(Map<String, String>) aoProcessar;
 
   const CardCartaoCredito({
-    Key? key,
+    super.key,
     required this.valor,
     required this.processando,
     required this.aoProcessar,
-  }) : super(key: key);
+  });
 
   @override
   State<CardCartaoCredito> createState() => _CardCartaoCreditoState();

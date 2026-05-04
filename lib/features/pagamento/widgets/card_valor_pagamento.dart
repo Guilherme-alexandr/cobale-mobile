@@ -6,11 +6,11 @@ class CardValorPagamento extends StatelessWidget {
   final int? totalParcelas;
 
   const CardValorPagamento({
-    Key? key,
+    super.key,
     required this.valor,
     this.parcelaAtual,
     this.totalParcelas,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class CardValorPagamento extends StatelessWidget {
                 Text(
                   'Parcela $parcelaAtual de $totalParcelas',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),

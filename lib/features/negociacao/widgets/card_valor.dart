@@ -5,10 +5,10 @@ class CardValor extends StatelessWidget {
   final String nomeCliente;
 
   const CardValor({
-    Key? key,
+    super.key,
     required this.valorDebito,
     required this.nomeCliente,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class CardValor extends StatelessWidget {
               Text(
                 'Negocie as condições de pagamento',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               ),

@@ -5,8 +5,7 @@ class ItemsCard extends StatelessWidget {
   final Bill bill;
   final double total;
 
-  const ItemsCard({Key? key, required this.bill, required this.total})
-    : super(key: key);
+  const ItemsCard({super.key, required this.bill, required this.total});
 
   @override
   Widget build(BuildContext context) {

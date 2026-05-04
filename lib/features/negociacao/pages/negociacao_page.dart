@@ -15,13 +15,13 @@ class NegociacaoPage extends StatefulWidget {
   final VoidCallback aoConfirmar;
 
   const NegociacaoPage({
-    Key? key,
+    super.key,
     required this.idCobranca,
     required this.valorDebito,
     required this.nomeCliente,
     required this.aoVoltar,
     required this.aoConfirmar,
-  }) : super(key: key);
+  });
 
   @override
   State<NegociacaoPage> createState() => _NegociacaoPageState();

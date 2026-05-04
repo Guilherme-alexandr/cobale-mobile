@@ -6,11 +6,11 @@ class CardTipoPagamento extends StatelessWidget {
   final Function(String) aoAlterar;
 
   const CardTipoPagamento({
-    Key? key,
+    super.key,
     required this.tipoPagamento,
     required this.valorDebito,
     required this.aoAlterar,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class CardTipoPagamento extends StatelessWidget {
             width: isSelecionado ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(8),
-          color: isSelecionado ? Colors.blue.withOpacity(0.05) : null,
+          color: isSelecionado ? Colors.blue.withValues(alpha: 0.05) : null,
         ),
         child: Row(
           children: [

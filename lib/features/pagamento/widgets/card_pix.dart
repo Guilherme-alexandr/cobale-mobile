@@ -6,10 +6,10 @@ class CardPix extends StatelessWidget {
   final VoidCallback aoConfirmarPagamento; // ✅ ADICIONADO
 
   const CardPix({
-    Key? key,
+    super.key,
     required this.aoCopiarCodigo,
     required this.aoConfirmarPagamento, // ✅ ADICIONADO
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

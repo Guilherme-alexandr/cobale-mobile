@@ -8,12 +8,12 @@ class CardBoleto extends StatelessWidget {
   final VoidCallback aoConfirmarPagamento;
 
   const CardBoleto({
-    Key? key,
+    super.key,
     required this.vencimento,
     required this.aoCopiarCodigo,
     required this.aoImprimir,
     required this.aoConfirmarPagamento,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

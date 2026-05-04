@@ -8,13 +8,13 @@ class CardSucesso extends StatelessWidget {
   final VoidCallback aoConfirmar;
 
   const CardSucesso({
-    Key? key,
+    super.key,
     required this.pagamentoAVista,
     required this.valorDebito,
     required this.parcelas,
     required this.valorParcela,
     required this.aoConfirmar,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

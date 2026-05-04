@@ -64,3 +64,8 @@ generated_plugin_registrant.dart
 *.lock
 *.log
 *.tmp
+
+#imagens
+/lib/imagens/
+
+/txts

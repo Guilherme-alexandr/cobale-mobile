@@ -1,5 +1,10 @@
+// lib/features/splash/pages/splash_page.dart
+
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:dio/dio.dart';
+import '../../../core/routes/app_routes.dart';
+import '../../../core/services/login_servico.dart';
+import '../../../core/api/api_endpoints.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -8,81 +13,86 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _SplashPageState extends State<SplashPage> {
+  final AuthService _authService = AuthService();
 
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-    _animation = Tween<double>(begin: 0.95, end: 1.05).animate(_controller);
-
-    _controller.repeat(reverse: true);
-
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/login');
-    });
+    _initializeApp();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  Future<void> _initializeApp() async {
+    await Future.wait([
+      _wakeUpApi(),
+      Future.delayed(const Duration(seconds: 2)),
+    ]);
+
+    final isLoggedIn = await _authService.isLoggedIn();
+
+    if (isLoggedIn) {
+      await _authService.updateLastActivity();
+    }
+
+    if (!mounted) return;
+
+    // 5. Navegação segura e sem chaves aninhadas!
+    if (isLoggedIn) {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.login);
+    }
+  }
+
+  Future<void> _wakeUpApi() async {
+    try {
+      debugPrint('🌐 Acordando a API do Render...');
+
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: ApiEndpoints.baseUrl,
+          connectTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 60),
+        ),
+      );
+
+      final response = await dio.get('/ping');
+
+      debugPrint('✅ API respondendo! Status: ${response.statusCode}');
+    } catch (e) {
+      debugPrint('⚠️ Erro ao acordar API ou tempo excedido: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF2563EB), Color(0xFF1E40AF)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: ScaleTransition(
-            scale: _animation,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.receipt_long,
-                    size: 60,
-                    color: Color(0xFF2563EB),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'CobAle',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Sistema de Cobranças',
-                  style: TextStyle(fontSize: 16, color: Color(0xFFBFDBFE)),
-                ),
-              ],
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'lib/imagens/logo.png',
+              height: 120,
+              errorBuilder: (_, _, _) => const Icon(
+                Icons.attach_money,
+                size: 80,
+                color: Color(0xFF2196F3),
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+            const Text(
+              'CobAle',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2196F3),
+              ),
+            ),
+            const SizedBox(height: 16),
+            const CircularProgressIndicator(),
+          ],
         ),
       ),
     );

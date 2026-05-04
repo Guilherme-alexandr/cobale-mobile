@@ -8,13 +8,13 @@ class CardSimulacaoParcelas extends StatelessWidget {
   final Function(int) aoAlterarParcelas;
 
   const CardSimulacaoParcelas({
-    Key? key,
+    super.key,
     required this.parcelas,
     required this.valorDebito,
     required this.totalComJuros,
     required this.valorParcela,
     required this.aoAlterarParcelas,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

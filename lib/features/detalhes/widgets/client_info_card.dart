@@ -1,10 +1,18 @@
+// lib/features/detalhes/widgets/client_info_card.dart
+
 import 'package:flutter/material.dart';
-import '../models/bill_model.dart';
 
 class ClientInfoCard extends StatelessWidget {
-  final Bill bill;
+  final String clientName;
+  final String clientEmail;
+  final String clientPhone;
 
-  const ClientInfoCard({Key? key, required this.bill}) : super(key: key);
+  const ClientInfoCard({
+    super.key,
+    required this.clientName,
+    required this.clientEmail,
+    required this.clientPhone,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +29,11 @@ class ClientInfoCard extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 12),
-            _buildInfoRow(Icons.person, 'Nome', bill.client),
+            _buildInfoRow(Icons.person, 'Nome', clientName),
             const Divider(height: 24),
-            _buildInfoRow(Icons.email, 'E-mail', bill.email),
+            _buildInfoRow(Icons.email, 'E-mail', clientEmail),
             const Divider(height: 24),
-            _buildInfoRow(Icons.phone, 'Telefone', bill.phone),
+            _buildInfoRow(Icons.phone, 'Telefone', clientPhone),
           ],
         ),
       ),

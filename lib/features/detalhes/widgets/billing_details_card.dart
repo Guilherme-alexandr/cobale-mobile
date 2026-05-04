@@ -1,10 +1,20 @@
+// lib/features/detalhes/widgets/billing_details_card.dart
+
 import 'package:flutter/material.dart';
-import '../models/bill_model.dart';
 
 class BillingDetailsCard extends StatelessWidget {
-  final Bill bill;
+  final DateTime issueDate;
+  final String description;
+  final String filial;
+  final String contratoId;
 
-  const BillingDetailsCard({Key? key, required this.bill}) : super(key: key);
+  const BillingDetailsCard({
+    super.key,
+    required this.issueDate,
+    required this.description,
+    required this.filial,
+    required this.contratoId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +31,14 @@ class BillingDetailsCard extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 12),
+            _buildDetailRow(Icons.assignment, 'Contrato', contratoId),
+            const Divider(height: 24),
+            _buildDetailRow(Icons.business, 'Filial', filial),
+            const Divider(height: 24),
             _buildDetailRow(
               Icons.calendar_today,
               'Data de Emissão',
-              _formatDate(bill.issueDate),
+              _formatDate(issueDate),
             ),
             const Divider(height: 24),
             Row(
@@ -48,10 +62,7 @@ class BillingDetailsCard extends StatelessWidget {
                         style: TextStyle(fontSize: 12, color: Colors.grey),
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        bill.description,
-                        style: const TextStyle(fontSize: 16),
-                      ),
+                      Text(description, style: const TextStyle(fontSize: 16)),
                     ],
                   ),
                 ),

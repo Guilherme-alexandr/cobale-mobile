@@ -5,8 +5,7 @@ class StatusCard extends StatelessWidget {
   final Bill bill;
   final Map<String, dynamic> statusInfo;
 
-  const StatusCard({Key? key, required this.bill, required this.statusInfo})
-    : super(key: key);
+  const StatusCard({super.key, required this.bill, required this.statusInfo});
 
   IconData _getIconData(String iconName) {
     switch (iconName) {
@@ -60,7 +59,8 @@ class StatusCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: color.withOpacity(0.1),
+                          // ✅ CORRIGIDO AQUI: withValues(alpha: 0.1)
+                          color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -88,7 +88,8 @@ class StatusCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        // ✅ CORRIGIDO AQUI: withValues(alpha: 0.1)
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(

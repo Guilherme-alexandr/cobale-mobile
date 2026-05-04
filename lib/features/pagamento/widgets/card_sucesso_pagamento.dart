@@ -8,13 +8,13 @@ class CardSucessoPagamento extends StatelessWidget {
   final VoidCallback aoConfirmar;
 
   const CardSucessoPagamento({
-    Key? key,
+    super.key,
     required this.valor,
     required this.metodoPagamento,
     this.parcelaAtual,
     this.totalParcelas,
     required this.aoConfirmar,
-  }) : super(key: key);
+  });
 
   String _getTitulo() {
     switch (metodoPagamento) {
